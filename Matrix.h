@@ -6,11 +6,11 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 
 // The implementation of the struct is up to you
-typedef struct Matrix* PMatrix;
-typedef const struct Matrix* CPMatrix;
+typedef struct Matrix *PMatrix;
+typedef const struct Matrix *CPMatrix;
 
 /**
  * @brief Creates a new matrix of a given height an width,
@@ -22,7 +22,7 @@ typedef const struct Matrix* CPMatrix;
  * @param[in] width Width of the matrix
  * @return ErrorCode
  */
-ErrorCode matrix_create(PMatrix* matrix, uint32_t height, uint32_t width);
+ErrorCode matrix_create(PMatrix *matrix, uint32_t height, uint32_t width);
 
 /**
  * @brief Creates a new matrix from an old matrix.
@@ -32,7 +32,7 @@ ErrorCode matrix_create(PMatrix* matrix, uint32_t height, uint32_t width);
  * @param[in] source The matrix to copy.
  * @return ErrorCode
  */
-ErrorCode matrix_copy(PMatrix* result, CPMatrix source);
+ErrorCode matrix_copy(PMatrix *result, CPMatrix source);
 
 /**
  * @brief Destroys a matrix.
@@ -48,7 +48,7 @@ void matrix_destroy(PMatrix matrix);
  * @param[out] result On output, contains the height of the matrix.
  * @return ErrorCode
  */
-ErrorCode matrix_getHeight(CPMatrix matrix, uint32_t* result);
+ErrorCode matrix_getHeight(CPMatrix matrix, uint32_t *result);
 
 /**
  * @brief Returns the width of a give matrix.
@@ -57,7 +57,7 @@ ErrorCode matrix_getHeight(CPMatrix matrix, uint32_t* result);
  * @param[out] result On output, contains the height of the matrix.
  * @return ErrorCode
  */
-ErrorCode matrix_getWidth(CPMatrix matrix, uint32_t* result);
+ErrorCode matrix_getWidth(CPMatrix matrix, uint32_t *result);
 
 /**
  * @brief Sets a value to the matrix.
@@ -82,7 +82,7 @@ ErrorCode matrix_setValue(PMatrix matrix, uint32_t rowIndex, uint32_t colIndex,
  * @return ErrorCode
  */
 ErrorCode matrix_getValue(CPMatrix matrix, uint32_t rowIndex, uint32_t colIndex,
-                          double* value);
+                          double *value);
 
 /**
  * @brief Computes the addition of two matrices.
@@ -93,7 +93,7 @@ ErrorCode matrix_getValue(CPMatrix matrix, uint32_t rowIndex, uint32_t colIndex,
  * @param[in] rhs The right hand side of the addition operation.
  * @return ErrorCode
  */
-ErrorCode matrix_add(PMatrix* result, CPMatrix lhs, CPMatrix rhs);
+ErrorCode matrix_add(PMatrix *result, CPMatrix lhs, CPMatrix rhs);
 
 /**
  * @brief Computes the multiplication of two matrices.
@@ -104,7 +104,7 @@ ErrorCode matrix_add(PMatrix* result, CPMatrix lhs, CPMatrix rhs);
  * @param[in] rhs The right hand side of the multiplication operation.
  * @return ErrorCode
  */
-ErrorCode matrix_multiplyMatrices(PMatrix* result, CPMatrix lhs, CPMatrix rhs);
+ErrorCode matrix_multiplyMatrices(PMatrix *result, CPMatrix lhs, CPMatrix rhs);
 
 /**
  * @brief Multiplies a matrix with a scalar and stores the result in
