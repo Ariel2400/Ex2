@@ -1,7 +1,7 @@
 #include "ErrorCode.h"
 
-extern "C"{
-    bool error_isSuccess(ErrorCode code) {
+extern "C" {
+bool error_isSuccess(ErrorCode code) {
   if (code == ERROR_SUCCESS) {
     return true;
   }
