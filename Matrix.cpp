@@ -1,4 +1,7 @@
 
+#include <iostream>
+using namespace std;
+
 #include "Matrix.h"
 
 class Matrix{
@@ -30,3 +33,18 @@ class Matrix{
       matrix_destroy(matrix);
     }
 };
+
+int main() {
+  Matrix matrix(4, 4);
+  for (int i = 0; i < matrix.getHeight(); i++) {
+    for (int j = 0; i < matrix.getWidth(); j++) {
+      matrix.setValue(i, j, i * 10 + j);
+    }
+  }
+  for (int i = 0; i < matrix.getHeight(); i++) {
+    for (int j = 0; i < matrix.getWidth(); j++) {
+      cout << matrix.getValue(i, j) << " ";
+    }
+    cout << endl;
+  }
+}
