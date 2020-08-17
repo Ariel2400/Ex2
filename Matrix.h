@@ -4,6 +4,10 @@
 
 #include "ErrorCode.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif 
+
 // The implementation of the struct is up to you
 typedef struct Matrix* PMatrix;
 typedef const struct Matrix* CPMatrix;
@@ -112,3 +116,7 @@ ErrorCode matrix_multiplyMatrices(PMatrix* result, CPMatrix lhs, CPMatrix rhs);
  * @return ErrorCode
  */
 ErrorCode matrix_multiplyWithScalar(PMatrix matrix, double scalar);
+
+#ifdef __cplusplus
+}
+#endif
