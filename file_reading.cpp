@@ -8,7 +8,7 @@
  * @param filePath The relative or absolute path to the file.
  * @return std::string File's content
  */
-std::string readFileContent(const std::string& filePath) {
+std::string readFileContent(const std::string &filePath) {
   // Opens input-only file (ifstream) in binary mode.
   std::ifstream in(filePath, std::ios::binary);
 
@@ -39,7 +39,7 @@ std::string readFileContent(const std::string& filePath) {
  * @param filePath The relative or absolute path to the file.
  * @param content Content to write.
  */
-void writeFileContent(const std::string& filePath, const std::string& content) {
+void writeFileContent(const std::string &filePath, const std::string &content) {
   // Opens output-only file (ofstream) in binary mode, and truncates all
   //    existing content from the file.
   std::ofstream out(filePath, std::ios::binary | std::ios::trunc);
