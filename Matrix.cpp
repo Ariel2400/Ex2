@@ -2,11 +2,12 @@
 #include <iostream>
 using namespace std;
 
-#include "Matrix.h"
+#include "Matrix.hpp"
 
 class Matrix{
-  public:
+  private:
     PMatrix matrix = nullptr;
+  public:
     Matrix(int height, int width){
       matrix_create(&matrix, height, width);
     }
