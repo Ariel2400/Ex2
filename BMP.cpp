@@ -1,12 +1,19 @@
 #include "Matrix.hpp"
-struct BMP{
+class BMP
+{
+private:
     BMPHeader header;
     BMPDibHeader DibHeader;
     BMPColorPalette palette;
     Matrix data;
+public:
+    BMP(char* path){
+        
+    }
 };
 
-struct BMPHeader{
+struct BMPHeader
+{
     uint32_t BM;
     uint32_t fileSize;
     uint32_t reserved1;
