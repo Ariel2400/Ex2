@@ -1,5 +1,4 @@
 #include <string>
-
 namespace testing {
 namespace bmp {
 /**
