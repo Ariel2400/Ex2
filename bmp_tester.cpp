@@ -1,19 +1,20 @@
 #include "bmp_tester.hpp"
 #include "bmp_parser.hpp"
-namespace testing{
-    namespace bmp{
-        void rotate_image(const std::string &imagePath, const std::string &outputPath){
-            BMP *file = new BMP(imagePath);
-            file->rotate_image();
-            file->write(outputPath);
-        }
-        void convert_to_grayscale(const std::string &imagePath, const std::string &outputPath){
-            BMP *file = new BMP(imagePath);
-            file->convert_to_grayscale();
-            file->write(outputPath);
-        }
-    }
-    int main(void) {
+namespace testing {
+namespace bmp {
+void rotate_image(const std::string &imagePath, const std::string &outputPath) {
+  BMP *file = new BMP(imagePath);
+  file->rotate_image();
+  file->write(outputPath);
+}
+void convert_to_grayscale(const std::string &imagePath,
+                          const std::string &outputPath) {
+  BMP *file = new BMP(imagePath);
+  file->convert_to_grayscale();
+  file->write(outputPath);
+
+} 
+int main() {
   /*
   // Read an image from disk and write it back:
   BMP bmp("Shapes.bmp");
@@ -31,4 +32,5 @@ namespace testing{
   bmp3.write("lena_output.bmp");
   return 0;
 }
-}
+} 
+} // namespace testing
