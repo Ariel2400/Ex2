@@ -1,7 +1,12 @@
-#include <map>
+
+#include <fstream>
+#include <iostream>
+#include <stdint.h>
+#include <vector>
 #include "Matrix.h"
 #ifndef BMP_PARSER_H
 #define BMP_PARSER_H
+using std::vector;
 struct BMPFileHeader {
   uint16_t file_type{0x4D42}; // File type always BM which is 0x4D42
   uint32_t file_size{0};      // Size of the file (in bytes)
@@ -37,7 +42,7 @@ struct BMPColorPalette {
 };
 
 
-class BMP{
+struct BMP{
     BMPFileHeader file_header;
     BMPInfoHeader bmp_info_header;
     BMPColorPalette bmp_color_palette;
@@ -48,7 +53,6 @@ class BMP{
     void write(const std::string fname);
     void convert_to_grayscale();
     void rotate_image();
-    private:
     Matrix *vector_to_matrix(vector<uint8_t> vector, int height, int width);
     vector<uint8_t> matrix_to_vector(Matrix *matrix);
     void write_headers(std::ofstream &of);
