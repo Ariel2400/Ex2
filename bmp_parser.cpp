@@ -76,18 +76,20 @@ void BMP::write(const std::string fname) {
 }
 
 void BMP::convert_to_grayscale() {
-  for (int i = 0; i < bmp_info_header.height; ++i) {
-    for (int j = 0; j < bmp_info_header.width; ++j) {
-      double b = pixels->getValue(i, 3 * j);
-      double g = pixels->getValue(i, 3 * j + 1);
-      double r = pixels->getValue(i, 3 * j + 2);
-      double grayscale = 0.0722 * b + 0.7152 * g + 0.2126 * r;
-      pixels->setValue(i, 3 * j, grayscale);
-      pixels->setValue(i, 3 * j + 1, grayscale);
-      pixels->setValue(i, 3 * j + 2, grayscale);
+  if(bmp_info_header.bit_count == 24){
+    for (int i = 0; i < bmp_info_header.height; ++i) {
+      for (int j = 0; j < bmp_info_header.width; ++j) {
+        double b = pixels->getValue(i, 3 * j);
+        double g = pixels->getValue(i, 3 * j + 1);
+        double r = pixels->getValue(i, 3 * j + 2);
+        double grayscale = 0.0722 * b + 0.7152 * g + 0.2126 * r;
+        pixels->setValue(i, 3 * j, grayscale);
+        pixels->setValue(i, 3 * j + 1, grayscale);
+        pixels->setValue(i, 3 * j + 2, grayscale);
+      }
     }
   }
-  if (bmp_info_header.bit_count == 8) {
+  else if (bmp_info_header.bit_count == 8) {
     for (int i = 0; i < bmp_color_palette.color_list->getHeight(); ++i) {
       double b = bmp_color_palette.color_list->getValue(i, 0);
       double g = bmp_color_palette.color_list->getValue(i, 1);
@@ -97,6 +99,9 @@ void BMP::convert_to_grayscale() {
       bmp_color_palette.color_list->setValue(i, 1, grayscale);
       bmp_color_palette.color_list->setValue(i, 2, grayscale);
     }
+  }
+  else {
+    throw std::runtime_error("Supporting only 8-bit and 24 bit format");
   }
 }
 
