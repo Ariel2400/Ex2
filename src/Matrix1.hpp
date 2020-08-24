@@ -6,10 +6,10 @@ class Matrix{
 
 public:
     Matrix(int width, int height);
-    int getHeight();
-    int getWidth();
+    int getHeight() const;
+    int getWidth() const;
     void setValue(int i, int j, double value);
-    double getValue(int i, int j);
+    double getValue(int i, int j) const;
     ~Matrix();
 private:
     PMatrix matrix = nullptr;
