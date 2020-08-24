@@ -13,6 +13,6 @@ int main(void) {
   */
 
   // Create a 24 bits/pixel BMP image in memory, modify it, save it on disk
-  testing::bmp::rotate_image("lena-color.bmp", "lena_output.bmp");
+  testing::bmp::rotate_image("lena.bmp", "lena_output.bmp");
   return 0;
 }
