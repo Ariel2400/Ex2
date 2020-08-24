@@ -1,4 +1,6 @@
 #include <string>
+
+#include "bmp_parser.hpp"
 namespace testing {
 namespace bmp {
 /**

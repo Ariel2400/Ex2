@@ -1,7 +1,7 @@
 
 #include <iostream>
 using namespace std;
-#include "Matrix.hpp"
+#include "Matrix1.hpp"
 
 Matrix::Matrix(int height, int width) { matrix_create(&matrix, height, width); }
 int Matrix::getHeight() {

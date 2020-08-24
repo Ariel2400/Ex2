@@ -1,7 +1,14 @@
-#include "Matrix.cpp"
 #include "bmp_parser.hpp"
+
 using std::vector;
 class Matrix;
+
+// Created a parameterless constructor to solve an issue with the compilation of
+// the destructor
+BMP::BMP() {
+  throw std::runtime_error("can only create bmp object using a file path");
+}
+
 BMP::BMP(const std::string fname) { read(fname); }
 
 void BMP::read(const std::string fname) {
@@ -12,43 +19,19 @@ void BMP::read(const std::string fname) {
     if (file_header.file_type != 0x4D42) {
       throw std::runtime_error("Error! Unrecognized file format.");
     }
+    inp.seekg(14, inp.beg);
     inp.read((char *)&bmp_info_header, sizeof(bmp_info_header));
 
     // Jump to the pixel data location
     inp.seekg(file_header.offset_data, inp.beg);
 
-    // Adjust the header fields for output.
-    // Some editors will put extra info in the image file, we only save the
-    // headers and the data.
-    if (bmp_info_header.bit_count == 32) {
-      // bmp_info_header.size = sizeof(BMPInfoHeader) +
-      // sizeof(BMPColorHeader); file_header.offset_data =
-      // sizeof(BMPFileHeader) + sizeof(BMPInfoHeader) +
-      // sizeof(BMPColorHeader);
-    } else if (bmp_info_header.bit_count == 24) {
-      // bmp_info_header.size = sizeof(BMPInfoHeader);
-      // file_header.offset_data = sizeof(BMPFileHeader) +
-      // sizeof(BMPInfoHeader);
-    } else {
-      // bmp_info_header.size = sizeof(BMPInfoHeader);
-      // file_header.offset_data = sizeof(BMPFileHeader) +
-      // sizeof(BMPInfoHeader);
-    }
-    // file_header.file_size = file_header.offset_data;
-
-    if (bmp_info_header.height < 0) {
-      throw std::runtime_error("The program can treat only BMP images with "
-                               "the origin in the bottom left corner!");
-    }
-
     data.resize(bmp_info_header.width * bmp_info_header.height *
                 bmp_info_header.bit_count / 8);
 
-    // Here we check if we need to take into account row padding
     if (bmp_info_header.bit_count == 24) {
       read_24_bit(&inp, data);
     } else if (bmp_info_header.bit_count == 8) {
-      read_8_bit(&inp, data);
+      read_8_bit(&inp);
     } else {
       throw std::runtime_error(
           "The program can treat only 24 or 8 bits per pixel BMP files");
@@ -65,7 +48,7 @@ void BMP::write(const std::string fname) {
     if (bmp_info_header.bit_count == 24) {
       write_24_bit(of, data);
     } else if (bmp_info_header.bit_count == 8) {
-      write_8_bit(of, data);
+      write_8_bit(of);
     } else {
       throw std::runtime_error(
           "The program can treat only 24 or 8 bits per pixel BMP files");
@@ -76,20 +59,18 @@ void BMP::write(const std::string fname) {
 }
 
 void BMP::convert_to_grayscale() {
-  if(bmp_info_header.bit_count == 24){
-    for (int i = 0; i < bmp_info_header.height; ++i) {
-      for (int j = 0; j < bmp_info_header.width; ++j) {
-        double b = pixels->getValue(i, 3 * j);
-        double g = pixels->getValue(i, 3 * j + 1);
-        double r = pixels->getValue(i, 3 * j + 2);
-        double grayscale = 0.0722 * b + 0.7152 * g + 0.2126 * r;
-        pixels->setValue(i, 3 * j, grayscale);
-        pixels->setValue(i, 3 * j + 1, grayscale);
-        pixels->setValue(i, 3 * j + 2, grayscale);
-      }
+  for (int i = 0; i < bmp_info_header.height; ++i) {
+    for (int j = 0; j < bmp_info_header.width; ++j) {
+      double b = pixels->getValue(i, 3 * j);
+      double g = pixels->getValue(i, 3 * j + 1);
+      double r = pixels->getValue(i, 3 * j + 2);
+      double grayscale = 0.0722 * b + 0.7152 * g + 0.2126 * r;
+      pixels->setValue(i, 3 * j, grayscale);
+      pixels->setValue(i, 3 * j + 1, grayscale);
+      pixels->setValue(i, 3 * j + 2, grayscale);
     }
   }
-  else if (bmp_info_header.bit_count == 8) {
+  if (bmp_info_header.bit_count == 8) {
     for (int i = 0; i < bmp_color_palette.color_list->getHeight(); ++i) {
       double b = bmp_color_palette.color_list->getValue(i, 0);
       double g = bmp_color_palette.color_list->getValue(i, 1);
@@ -99,9 +80,6 @@ void BMP::convert_to_grayscale() {
       bmp_color_palette.color_list->setValue(i, 1, grayscale);
       bmp_color_palette.color_list->setValue(i, 2, grayscale);
     }
-  }
-  else {
-    throw std::runtime_error("Supporting only 8-bit and 24 bit format");
   }
 }
 
@@ -153,10 +131,16 @@ void BMP::rotate_image() {
   }
 }
 
+BMP::~BMP() {
+  delete bmp_color_palette.color_list;
+  delete bmp_color_palette.pixel_color_indexes;
+  delete pixels;
+}
+
 Matrix *BMP::vector_to_matrix(vector<uint8_t> vector, int height, int width) {
   Matrix *matrix = new Matrix(height, width);
-  for (uint32_t i = 0; i < height; ++i) {
-    for (uint32_t j = 0; j < width; ++j) {
+  for (int i = 0; i < height; ++i) {
+    for (int j = 0; j < width; ++j) {
       matrix->setValue(i, j, vector[i * width + j]);
     }
   }
@@ -165,10 +149,9 @@ Matrix *BMP::vector_to_matrix(vector<uint8_t> vector, int height, int width) {
 
 vector<uint8_t> BMP::matrix_to_vector(Matrix *matrix) {
   vector<uint8_t> vector;
-  uint32_t channels = bmp_info_header.bit_count / 8;
   vector.resize(matrix->getHeight() * matrix->getWidth());
-  for (uint32_t i = 0; i < matrix->getHeight(); ++i) {
-    for (uint32_t j = 0; j < matrix->getWidth(); ++j) {
+  for (int i = 0; i < matrix->getHeight(); ++i) {
+    for (int j = 0; j < matrix->getWidth(); ++j) {
       vector.at(i * matrix->getWidth() + j) = matrix->getValue(i, j);
     }
   }
@@ -212,15 +195,15 @@ void BMP::write_24_bit(std::ofstream &of, vector<uint8_t> data) {
   }
 }
 
-void BMP::write_8_bit(std::ofstream &of, vector<uint8_t> data) {
+void BMP::write_8_bit(std::ofstream &of) {
   write_headers(of);
   std::vector<uint8_t> color_palette =
       matrix_to_vector(bmp_color_palette.color_list);
-  std::vector<uint8_t> padding(1);
+  std::vector<uint8_t> color_palette_padding(1);
   int num_of_colors = bmp_color_palette.color_list->getHeight();
   for (int i = 0; i < num_of_colors; ++i) {
     of.write((const char *)(color_palette.data() + 3 * i), 3);
-    of.write((const char *)padding.data(), 1);
+    of.write((const char *)color_palette_padding.data(), 1);
   }
   std::vector<uint8_t> pixel_color_indexes =
       matrix_to_vector(bmp_color_palette.pixel_color_indexes);
@@ -228,13 +211,14 @@ void BMP::write_8_bit(std::ofstream &of, vector<uint8_t> data) {
     of.write((const char *)pixel_color_indexes.data(),
              pixel_color_indexes.size());
   } else {
-    uint32_t row_stride = bmp_info_header.width;
+    // uint32_t image_stride = bmp_info_header.width;
     uint32_t new_stride = make_stride_aligned(4);
-    std::vector<uint8_t> padding(new_stride - row_stride);
+    std::vector<uint8_t> pixel_color_indexes_padding(new_stride - row_stride);
     for (int i = 0; i < bmp_info_header.height; ++i) {
       of.write((const char *)(pixel_color_indexes.data() + row_stride * i),
                row_stride);
-      of.write((const char *)padding.data(), padding.size());
+      of.write((const char *)pixel_color_indexes_padding.data(),
+               pixel_color_indexes_padding.size());
     }
   }
 }
@@ -244,11 +228,12 @@ void BMP::read_24_bit(std::ifstream *inp, vector<uint8_t> data) {
     inp->read((char *)data.data(), data.size());
     file_header.file_size += data.size();
   } else {
-    uint32_t row_stride = bmp_info_header.width * bmp_info_header.bit_count / 8;
+    uint32_t row_stride_24bit =
+        bmp_info_header.width * bmp_info_header.bit_count / 8;
     uint32_t new_stride = make_stride_aligned(4);
     std::vector<uint8_t> padding_row(new_stride - row_stride);
     for (int i = 0; i < bmp_info_header.height; ++i) {
-      inp->read((char *)(data.data() + row_stride * i), row_stride);
+      inp->read((char *)(data.data() + row_stride_24bit * i), row_stride_24bit);
       inp->read((char *)padding_row.data(), padding_row.size());
     }
     file_header.file_size +=
@@ -258,7 +243,7 @@ void BMP::read_24_bit(std::ifstream *inp, vector<uint8_t> data) {
       vector_to_matrix(data, bmp_info_header.height, bmp_info_header.width * 3);
 }
 
-void BMP::read_8_bit(std::ifstream *inp, vector<uint8_t> data) {
+void BMP::read_8_bit(std::ifstream *inp) {
   inp->seekg(54, inp->beg);
   int color_palette_size = file_header.offset_data - 54;
   int num_of_colors = color_palette_size / 4;
@@ -274,11 +259,12 @@ void BMP::read_8_bit(std::ifstream *inp, vector<uint8_t> data) {
   if (bmp_info_header.width % 4 == 0) {
     inp->read((char *)color_indexes.data(), color_indexes.size());
   } else {
-    uint32_t row_stride = bmp_info_header.width;
+    uint32_t row_stride_8bit = bmp_info_header.width;
     uint32_t new_stride = make_stride_aligned(4);
     std::vector<uint8_t> padding_row(new_stride - row_stride);
     for (int i = 0; i < bmp_info_header.height; ++i) {
-      inp->read((char *)(color_indexes.data() + row_stride * i), row_stride);
+      inp->read((char *)(color_indexes.data() + row_stride_8bit * i),
+                row_stride_8bit);
       inp->read((char *)padding_row.data(), padding_row.size());
     }
   }
