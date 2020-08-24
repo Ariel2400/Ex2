@@ -4,6 +4,9 @@ using namespace std;
 #include "Matrix1.hpp"
 
 Matrix::Matrix(int height, int width) { matrix_create(&matrix, height, width); }
+PMatrix Matrix::getMatrix() const{
+  return this->matrix;
+}
 int Matrix::getHeight() const {
   uint32_t height;
   matrix_getHeight(matrix, &height);

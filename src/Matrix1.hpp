@@ -13,5 +13,6 @@ public:
     ~Matrix();
 private:
     PMatrix matrix = nullptr;
+    PMatrix getMatrix() const;
 };
 #endif
