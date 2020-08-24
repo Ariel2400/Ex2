@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdint.h>
 #include <vector>
+#include <memory>
 
 #include "Matrix1.hpp"
 
@@ -63,8 +64,8 @@ public:
   ~BMP();
 
 private:
-  Matrix *vector_to_matrix(vector<uint8_t> vector, int height, int width);
-  vector<uint8_t> matrix_to_vector(Matrix *matrix);
+  std::uniqe_ptr<Matrix> vector_to_matrix(vector<uint8_t> vector, int height, int width);
+  vector<uint8_t> matrix_to_vector(std::uniqe_ptr<Matrix> matrix);
   void write_headers(std::ofstream &of);
   void write_headers_and_data(std::ofstream &of, vector<uint8_t> data);
   uint32_t make_stride_aligned(uint32_t align_stride);
