@@ -109,7 +109,7 @@ void BMP::rotate_image() {
           pixels->getValue(j, PIXEL_OFFSET * (bmp_info_header.height - i) + 2));
     }
   }
-  pixels = std::make_unique<Matrix>(bmp_info_header.height, bmp_info_header.width * PIXEL_OFFSET);
+  pixels = new Matrix(bmp_info_header.height, bmp_info_header.width * PIXEL_OFFSET);
   for (int i = 0; i < bmp_info_header.height; ++i) {
     for (int j = 0; j < bmp_info_header.width; ++j) {
       pixels->setValue(i, PIXEL_OFFSET * j, rotated_pixels->getValue(i, PIXEL_OFFSET * j));
@@ -129,7 +129,7 @@ void BMP::rotate_image() {
       }
     }
     bmp_color_palette.pixel_color_indexes =
-        std::make_unique<Matrix>(bmp_info_header.height, bmp_info_header.width);
+        new Matrix(bmp_info_header.height, bmp_info_header.width);
     for (int i = 0; i < bmp_info_header.height; ++i) {
       for (int j = 0; j < bmp_info_header.width; ++j) {
         bmp_color_palette.pixel_color_indexes->setValue(
@@ -145,8 +145,8 @@ BMP::~BMP() {
   delete pixels;
 }
 
-std::unique_ptr<Matrix> BMP::vector_to_matrix(vector<uint8_t> vector, int height, int width) {
-  auto matrix = std::make_unique<Matrix>(height, width);
+Matrix* BMP::vector_to_matrix(vector<uint8_t> vector, int height, int width) {
+  auto matrix = new Matrix(height, width);
   for (int i = 0; i < height; ++i) {
     for (int j = 0; j < width; ++j) {
       matrix->setValue(i, j, vector[i * width + j]);
