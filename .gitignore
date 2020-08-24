@@ -32,6 +32,7 @@
 *.exe
 *.out
 *.app
+<<<<<<< HEAD
 *.i*86
 *.x86_64
 *.hex
@@ -55,4 +56,11 @@ dkms.conf
 build/
 
 #vscode auto-generated dir
+=======
+
+# CMake auto generated files
+build/
+
+#VScode auto generated files
+>>>>>>> develop
 .vscode/
