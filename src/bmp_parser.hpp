@@ -6,7 +6,7 @@
 #include <vector>
 #include <memory>
 
-#include "Matrix1.hpp"
+#include "MatrixClass.hpp"
 
 
 using std::vector;

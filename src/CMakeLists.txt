@@ -6,7 +6,7 @@ add_compile_options(-Wall -Wextra -pedantic -Werror -Wnon-virtual-dtor -Wshadow)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
-add_executable(ex2.out bmp_parser.cpp bmp_tester.cpp Matrix1.cpp main.cpp)
+add_executable(ex2.out bmp_parser.cpp bmp_tester.cpp MatrixClass.cpp main.cpp)
 target_link_libraries(ex2.out matrix)
 
 # to include the src directory
